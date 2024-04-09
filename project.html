@@ -286,18 +286,7 @@
 <script src="assets/js/theme.js"></script>
 
 <script>
-    var imageUrls = [
-        'assets/img/projects/lavoro1.jpg',
-        'assets/img/projects/lavoro2.jpg',
-        'assets/img/projects/lavoro3.jpg',
-        'assets/img/projects/lavoro4.jpg',
-        'assets/img/projects/lavoro5.jpg',
-        'assets/img/projects/lavoro6.jpg',
-        'assets/img/projects/lavoro7.jpg',
-        'assets/img/projects/lavoro8.jpg'
-    ];
-
-    function createSlideshow() {
+    function createSlideshow(imageUrls) {
         var slideshowContainer = document.getElementById('slideshow-container');
         var dotContainer = document.getElementById('dot-container');
 
@@ -342,7 +331,30 @@
         setTimeout(showSlides, 3000);
     }
 
-    createSlideshow();
+    // Funzione per caricare dinamicamente le immagini dall'API
+    function loadImagesFromApi() {
+        var imageFolder = 'assets/img/projects/imgCarosello'; // Specifica il percorso della cartella delle immagini
+        var url = 'cors_proxy.php?image_folder=' + encodeURIComponent(imageFolder);
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    // Ricevi l'array di URL delle immagini come risposta
+                    var imageUrls = JSON.parse(xhr.responseText);
+                    // Chiamata alla funzione per creare lo slideshow con gli URL delle immagini ottenute
+                    createSlideshow(imageUrls);
+                } else {
+                    console.error('Errore durante il caricamento delle immagini:', xhr.status);
+                }
+            }
+        };
+        xhr.open('GET', url, true);
+        xhr.send();
+    }
+
+    // Chiamata alla funzione per caricare le immagini dall'API
+    loadImagesFromApi();
 </script>
 </body>
 
